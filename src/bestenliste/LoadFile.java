@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
  *
  */
 public class LoadFile {
-	/**Pfad zur Speicherdatei für Highscores*/
+	/**Pfad zur Speicherdatei fuer Highscores*/
 	private String fileHighscore = "files/highscores.xml";
 	/**Schluessel fuer die Vigenereverschluesselung*/
 	private char[] vigKey = "Heizoelrueckstossabdaempfung".toCharArray();
