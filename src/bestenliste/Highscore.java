@@ -2,14 +2,19 @@ package bestenliste;
 
 /**
  * Diese Klasse fasst Highscores mit Spielername, Rekordzeit, Systemzeit und der Anzahl benoetigter Zeilen zusammen.
- * Dies ist eine Beispielklasse und verwendet einen Highscore im Spiel MasterMind als Beispiel.
+ * 
  * @author Lukas Schramm
+ * @version 1.0
  */
 public class Highscore implements Comparable<Highscore> {
 	
+	/**Zeit zu der der Highscore erreicht wurde*/
 	private long systemzeit;
+	/**Zeit die zur Loesung gebraucht wurde*/
 	private long rekordzeit;
+	/**Name des Spielers*/
 	private String name;
+	/**Gebrauchte Versuche zur Loesung*/
 	private int zeilen;
 	
 	public Highscore(long systemzeit, long rekordzeit, String name, int zeilen) {
@@ -48,5 +53,4 @@ public class Highscore implements Comparable<Highscore> {
 		}
 		return rueckgabe;
 	}
-
 }

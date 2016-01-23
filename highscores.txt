@@ -1,4 +1,0 @@
-#Gespeicherte Highscores
-#Mon May 25 14:10:21 CEST 2015
-highscore0=y¬¤¡ª¦ª §¬«­ÚØÑÙ¡¤
-anzahlHighscores=y

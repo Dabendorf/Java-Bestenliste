@@ -21,17 +21,23 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**
- * Diese Klasse erstellt die Bestenliste und ordnet selbige in eine primitive Tabelle ein.
+ * Diese Klasse erstellt die Bestenliste (Spiel: Mastermind) und ordnet selbige in eine primitive Tabelle ein.
+ * 
  * @author Lukas Schramm
+ * @version 1.0
  */
-public class Bestenliste {
+public class Leaderboard {
 
+	/**JFrame auf dem die Tabelle dargestellt wird*/
 	private JFrame frame1 = new JFrame("Bestenliste");
-	private JTable tabelle1 = new JTable();
-	private GridLayout gridlayout = new GridLayout();
-	private ArrayList<Highscore> highscoreliste = new ArrayList<Highscore>();
+	/**Highscoretabelle*/
+	private JTable table1 = new JTable();
+	/**ArrayList mit Highscores*/
+	private ArrayList<Highscore> highscorelist = new ArrayList<Highscore>();
+	/**Objekt der Klasse zum Aufrufen der Highscores*/
+	private LoadFile lf = new LoadFile();
 
-	public Bestenliste() {
+	public Leaderboard() {
 		frame1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame1.setPreferredSize(new Dimension(600,400));
         frame1.setMinimumSize(new Dimension(300,200));
@@ -44,18 +50,17 @@ public class Bestenliste {
         });
 	    
 	    Container cp = frame1.getContentPane();
-	    cp.setLayout(gridlayout);
+	    cp.setLayout(new GridLayout());
 	    
-	    highscoresladen();
+	    loadHighscores();
 	}
 	
 	/**
 	 * Hier werden alle alten Highscores aus der Highscoreliste geladen und in die Highscoreliste integriert.
 	 */
-	private void highscoresladen() {
-		Spielstand spst = new Spielstand();
-		for(Highscore hsc:spst.allesLaden()) {
-			highscoreliste.add(hsc);
+	private void loadHighscores() {
+		for(Highscore hsc:lf.getAllHighscores()) {
+			highscorelist.add(hsc);
 		}
 	}
 	
@@ -66,18 +71,18 @@ public class Bestenliste {
 	 * @param name Dies ist der Name des Spielers
 	 * @param zeilen Dies ist die Anzahl von Zeilen nach welchen der Spieler siegte
 	 */
-	public void highscorehinzufuegen(long systemzeit,long rekordzeit,String name,int zeilen) {
-		highscoreliste.add(new Highscore(systemzeit,rekordzeit,name,zeilen));
+	public void addHighscore(long systemzeit,long rekordzeit,String name,int zeilen) {
+		highscorelist.add(new Highscore(systemzeit,rekordzeit,name,zeilen));
 	}
 	
 	/**
 	 * Diese Methode sortiert die Highscores und ueberfuert sie in die Tabelle.
 	 */
-	public void sortiere() {
-		Collections.sort(highscoreliste);
+	public void sort() {
+		Collections.sort(highscorelist);
 		Vector<Object> eintraege = new Vector<Object>();
-		for(Highscore hsc:highscoreliste) {
-			if(highscoreliste.indexOf(hsc)<25) {
+		for(Highscore hsc:highscorelist) {
+			if(highscorelist.indexOf(hsc)<25) {
 				Vector<Object> zeile = new Vector<Object>();
 				zeile.add(hsc.getName());
 				zeile.add(hsc.getZeilen());
@@ -90,7 +95,7 @@ public class Bestenliste {
 			    Format format = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 				zeile.add(format.format(date));
 				eintraege.add(zeile);
-				new Spielstand().schreiben(hsc,highscoreliste.indexOf(hsc));
+				lf.addHighscore(hsc, highscorelist.indexOf(hsc));
 			}
 		}
 
@@ -99,36 +104,42 @@ public class Bestenliste {
 		titel.add("Versuche");
 		titel.add("Zeit");
 		titel.add("Erreicht");
-		tabelle1 = new JTable(eintraege, titel);
+		table1 = new JTable(eintraege, titel);
 		
-		tabelle1.getColumn("Name").setPreferredWidth(40);
-	    tabelle1.getColumn("Versuche").setPreferredWidth(15);
-	    tabelle1.getColumn("Zeit").setPreferredWidth(20);
-	    tabelle1.getColumn("Erreicht").setPreferredWidth(25);
-	    tabelle1.getTableHeader().setBackground(Color.lightGray);
-	    tabelle1.setEnabled(false);
+		table1.getColumn("Name").setPreferredWidth(40);
+	    table1.getColumn("Versuche").setPreferredWidth(15);
+	    table1.getColumn("Zeit").setPreferredWidth(20);
+	    table1.getColumn("Erreicht").setPreferredWidth(25);
+	    table1.getTableHeader().setBackground(Color.lightGray);
+	    table1.setEnabled(false);
 	    
 	    DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 	    centerRenderer.setHorizontalAlignment(SwingConstants.RIGHT);
-	    for(int x=0;x<tabelle1.getColumnCount();x++) {
-	    	tabelle1.getColumnModel().getColumn(x).setCellRenderer(centerRenderer);
-	    	tabelle1.getTableHeader().getColumnModel().getColumn(x).setCellRenderer(centerRenderer);
+	    for(int x=0;x<table1.getColumnCount();x++) {
+	    	table1.getColumnModel().getColumn(x).setCellRenderer(centerRenderer);
+	    	table1.getTableHeader().getColumnModel().getColumn(x).setCellRenderer(centerRenderer);
 	    }
 	    
-	    tabelle1.setDefaultRenderer(String.class, centerRenderer);
+	    table1.setDefaultRenderer(String.class, centerRenderer);
 	    
 	    frame1.pack();
 	    frame1.setLocationRelativeTo(null);
-	    tabelle1.setVisible(true);
-	    frame1.getContentPane().add(new JScrollPane(tabelle1));
+	    table1.setVisible(true);
+	    frame1.getContentPane().add(new JScrollPane(table1));
 	}
 	
 	/**
 	 * Diese Methode kann die Bestenliste anzeigen oder wieder ausblenden.
 	 * @param anzeigen Boolean, ob angezeigt oder ausgeblendet wird.
 	 */
-	public void anzeigen(boolean anzeigen) {
+	public void show(boolean anzeigen) {
 		frame1.setVisible(anzeigen);
 	}
-
+	
+	public static void main(String[] args) {
+		Leaderboard lb = new Leaderboard();
+		//lb.addHighscore(System.currentTimeMillis(), 5000, "Lukas", 7);
+		lb.sort();
+		lb.show(true);
+	}
 }
